@@ -10,7 +10,7 @@ Strimzi Kafka는 아래와 같은 프로세스를 단순화할 수 있다.
 * Topic 생성 및 관리
 
 # Strimzi Kafka Architecture
-Kafka의 아키텍처에는 다음이 포함된다. 
+Strimzi Kafka의 아키텍처에는 다음이 포함된다. 
 
 * Kafka의 서버 역할을 하는 Broker로 구성된 **Kafka Cluster**
 * Kafka의 메타데이터 및 상태관리를 해주는 **Zookeeper**
@@ -74,14 +74,14 @@ spec:
 URL - https://strimzi.io/quickstarts/
 
 ## 2. 설치 (yaml 등록 방식)
-1. Strimzi Kafka Operator 다운로드 - `Kubernetes Master Node`에서 진행
+**1. Strimzi Kafka Operator 다운로드** - `Kubernetes Master Node`에서 진행
 - 현재 기준 Stable 버전으로 진행한다 - https://strimzi.io/downloads/
 ```sh
 wget https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.35.1/strimzi-0.35.1.tar.gz
 tar zxvf strimzi-0.35.1.tar.gz
 ```
 
-2. 다운로드 받은 tar.gz 파일을 압축 해제한다.
+**2. 다운로드 받은 tar.gz 파일을 압축 해제한다.**
 ```bash
 strimzi-0.35.1
 │  docs/
@@ -90,18 +90,40 @@ strimzi-0.35.1
 └─ CHANGELOG.md
 ```
 
-3. Strimzi Operator가 감시할 대상 Namespace를 생성한다.
+**3. Strimzi Operator가 감시할 대상 Namespace를 생성한다.**
 ```bash
 kubectl create namespace test-kafka
 ```
-4. Cluster Operator가 위 네임스페이스를 사용하도록 Strimzi 설치 파일을 수정한다.
+**4. Cluster Operator가 위 네임스페이스를 사용하도록 Strimzi 설치 파일을 수정한다.**
 ```bash
 cd $STRIMZI_HOME
 
 sed -i 's/namespace: .*/namespace: test-kafka/' install/cluster-operator/*RoleBinding*.yaml
 ```
-5. Cluster Operator를 배포한다.
+**5. Cluster Operator(Cluster 관리)를 배포한다.**
 ```bash
 kubectl create -f install/cluster-operator -n test-kafka
 ```
-6. 
+**6. 배포 상태를 확인한다.**
+```bash
+kubectl get deployments -n test-kafka
+NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
+strimzi-cluster-operator     1/1     1            1           3d5h
+```
+> 위 상태와 같으면 정상적으로 배포된 상태이다.
+
+**7. Kafka Cluster를 배포한다.**
+$STRIMZI_HOME/examples/kafka 디렉토리에 Sample YAML 파일들이 존재한다.
+```bash
+strimzi-0.35.1/examples/kafka
+│  kafka-ephemeral-single.yaml
+│  kafka-ephemeral.yaml
+│  kafka-jbod.yaml
+│  kafka-persistent-single.yaml
+└─ kafka-persistent.yaml
+```
+* `kafka-ephemeral-single.yaml` - 3 Zookeeper, 1 Kafka 로 구성된 임시 클러스터(Pod 재기동 시 데이터 삭제)
+* `kafka-ephemeral.yaml` - 3 Zookeeper, 3 Kafka 로 구성된 임시 클러스터
+* `kafka-jbod.yaml` - 3 Zookeeper, 3 Kafka 로 구성된 영구 클러스터 (각각 여러 영구 볼륨 사용)
+* `kafka-persistent-single.yaml` - 1 Zookeeper, 1 Kafka 로 구성된 영구 클러스터
+* `kafka-persistent.yaml` - 3 Zookeeper, 3 Kafka 로 구성된 영구 클러스터
