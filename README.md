@@ -126,4 +126,22 @@ strimzi-0.35.1/examples/kafka
 * `kafka-ephemeral.yaml` - 3 Zookeeper, 3 Kafka 로 구성된 임시 클러스터
 * `kafka-jbod.yaml` - 3 Zookeeper, 3 Kafka 로 구성된 영구 클러스터 (각각 여러 영구 볼륨 사용)
 * `kafka-persistent-single.yaml` - 1 Zookeeper, 1 Kafka 로 구성된 영구 클러스터
-* `kafka-persistent.yaml` - 3 Zookeeper, 3 Kafka 로 구성된 영구 클러스터
+* `kafka-persistent.yaml` - 3 Zookeeper, 3 Kafka 로 구성된 영구 클러스터 
+
+본 문서에서는 3 Zookeeper, 3 Kafka로 구성된 임시 클러스터를 배포한다.
+```bash
+kubectl apply -f kafka-ephemeral.yaml
+```
+**8. 배포 상태를 확인한다.**
+```bash
+kubectl get pods -n test-kafka
+NAME                                          READY   STATUS    RESTARTS        AGE
+my-cluster-entity-operator-58f7457b4f-tkvmb   4/4     Running   0               6h19m
+my-cluster-kafka-0                            2/2     Running   0               6h16m
+my-cluster-kafka-1                            2/2     Running   0               3d7h
+my-cluster-kafka-2                            2/2     Running   0               3d7h
+my-cluster-zookeeper-0                        1/1     Running   0               6h16m
+my-cluster-zookeeper-1                        1/1     Running   0               3d7h
+my-cluster-zookeeper-2                        1/1     Running   0               3d7h
+strimzi-cluster-operator-64d7d46fc-gtr8j      2/2     Running   0               6h19m
+```
