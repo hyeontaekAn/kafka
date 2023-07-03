@@ -112,7 +112,7 @@ strimzi-cluster-operator     1/1     1            1           3d5h
 ```
 > 위 상태와 같으면 정상적으로 배포된 상태이다.
 
-**7. Kafka Cluster를 배포한다.**
+**7. Kafka Cluster를 배포한다.**   
 $STRIMZI_HOME/examples/kafka 디렉토리에 Sample YAML 파일들이 존재한다.
 ```bash
 strimzi-0.35.1/examples/kafka
