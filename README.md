@@ -48,9 +48,10 @@ Strimzi는 쿠버네티스 환경을 위한 Operator이다.
 
 
 ### Istio 사용 여부
-Istio Proxy 사용 시 기동이 안되는 오류가 있다. 
+Istio Proxy 사용 시 Zookeeper 기동이 안되는 오류가 있다. 
 
-이는 Strimzi에서 제공하는 Zookeeper의 의도된 방향이며, Zookeeper에 대한 **Istio Injection을 제거**해야만 기동이 가능하다.
+Zookeeper는 Pod IP에서만 수신 대기하기 때문에, Zookeeper에 대한 **Istio Injection을 제거**해야만 기동이 가능하다.   
+(참고 URL - https://github.com/istio/istio/issues/19280)
 ```yaml
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
@@ -145,3 +146,65 @@ my-cluster-zookeeper-1                        1/1     Running   0               
 my-cluster-zookeeper-2                        1/1     Running   0               3d7h
 strimzi-cluster-operator-64d7d46fc-gtr8j      2/2     Running   0               6h19m
 ```
+## 3. 설치 (Helm 사용)
+**1. Helm 다운로드** - `Kubernetes Master Node`에서 진행   
+참고 URL - https://helm.sh/ko/docs/intro/install/
+```bash
+$ helm version
+version.BuildInfo{Version:"v3.11.2", GitCommit:"912ebc1cd10d38d340f048efaf0abda047c3468e", GitTreeState:"clean", GoVersion:"go1.18.10"}
+```
+
+**2. Strimzi Operator 설치**
+```bash
+$ helm repo add strimzi https://strimzi.io/charts/  # repo 추가
+$ helm repo update                                  # repo 업데이트
+
+$ helm repo list    # 추가 확인
+NAME            URL
+strimzi         https://strimzi.io/charts/
+```
+
+**3. Kubernetes Namespace 생성**
+```bash
+$ kubectl create namespace helm-strimzi  # kubectl create namespace <namespace명>
+```
+
+**4. Strimzi-Cluster-Operator 배포**
+```bash
+$ helm install helm-strimzi --namespace helm-strimzi strimzi/strimzi-kafka-operator
+NAME: helm-strimzi
+LAST DEPLOYED: Tue Jul  4 13:25:22 2023
+NAMESPACE: helm-strimzi
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+Thank you for installing strimzi-kafka-operator-0.35.1
+
+To create a Kafka cluster refer to the following documentation.
+
+https://strimzi.io/docs/operators/latest/deploying.html#deploying-cluster-operator-helm-chart-str
+```
+
+**5. 배포 확인**
+```bash
+$ helm list -A
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                           APP VERSION
+helm-strimzi    helm-strimzi    1               2023-07-04 13:25:22.529077679 +0900 KST deployed        strimzi-kafka-operator-0.35.1   0.35.1
+```
+* CRD 배포 확인
+```bash
+$ kubectl get crd -A |grep kafka
+kafkabridges.kafka.strimzi.io                         2023-07-04T04:25:20Z
+kafkaconnectors.kafka.strimzi.io                      2023-07-04T04:25:20Z
+kafkaconnects.kafka.strimzi.io                        2023-07-04T04:25:20Z
+kafkamirrormaker2s.kafka.strimzi.io                   2023-07-04T04:25:20Z
+kafkamirrormakers.kafka.strimzi.io                    2023-07-04T04:25:20Z
+kafkarebalances.kafka.strimzi.io                      2023-07-04T04:25:20Z
+kafkas.kafka.strimzi.io                               2023-07-04T04:25:20Z
+kafkatopics.kafka.strimzi.io                          2023-07-04T04:25:20Z
+kafkausers.kafka.strimzi.io                           2023-07-04T04:25:20Z
+```
+**6. Kafka Cluster 배포**
+해당 단계 내용부터는 위 yaml등록 방식과 동일하다. 아래 URL을 통해 Kafka Cluster YAML파일을 볼 수 있다. 
+URL - https://github.com/strimzi/strimzi-kafka-operator/tree/main/examples/kafka
