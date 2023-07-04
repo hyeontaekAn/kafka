@@ -78,8 +78,8 @@ URL - https://strimzi.io/quickstarts/
 **1. Strimzi Kafka Operator 다운로드** - `Kubernetes Master Node`에서 진행
 - 현재 기준 Stable 버전으로 진행한다 - https://strimzi.io/downloads/
 ```sh
-wget https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.35.1/strimzi-0.35.1.tar.gz
-tar zxvf strimzi-0.35.1.tar.gz
+$ wget https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.35.1/strimzi-0.35.1.tar.gz
+$ tar zxvf strimzi-0.35.1.tar.gz
 ```
 
 **2. 다운로드 받은 tar.gz 파일을 압축 해제한다.**
@@ -93,21 +93,21 @@ strimzi-0.35.1
 
 **3. Strimzi Operator가 감시할 대상 Namespace를 생성한다.**
 ```bash
-kubectl create namespace test-kafka
+$ kubectl create namespace test-kafka
 ```
 **4. Cluster Operator가 위 네임스페이스를 사용하도록 Strimzi 설치 파일을 수정한다.**
 ```bash
-cd $STRIMZI_HOME
+$ cd $STRIMZI_HOME
 
-sed -i 's/namespace: .*/namespace: test-kafka/' install/cluster-operator/*RoleBinding*.yaml
+$ sed -i 's/namespace: .*/namespace: test-kafka/' install/cluster-operator/*RoleBinding*.yaml
 ```
 **5. Cluster Operator(Cluster 관리)를 배포한다.**
 ```bash
-kubectl create -f install/cluster-operator -n test-kafka
+$ kubectl create -f install/cluster-operator -n test-kafka
 ```
 **6. 배포 상태를 확인한다.**
 ```bash
-kubectl get deployments -n test-kafka
+$ kubectl get deployments -n test-kafka
 NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
 strimzi-cluster-operator     1/1     1            1           3d5h
 ```
@@ -131,11 +131,11 @@ strimzi-0.35.1/examples/kafka
 
 본 문서에서는 3 Zookeeper, 3 Kafka로 구성된 임시 클러스터를 배포한다.
 ```bash
-kubectl apply -f kafka-ephemeral.yaml
+$ kubectl apply -f kafka-ephemeral.yaml
 ```
 **8. 배포 상태를 확인한다.**
 ```bash
-kubectl get pods -n test-kafka
+$ kubectl get pods -n test-kafka
 NAME                                          READY   STATUS    RESTARTS        AGE
 my-cluster-entity-operator-58f7457b4f-tkvmb   4/4     Running   0               6h19m
 my-cluster-kafka-0                            2/2     Running   0               6h16m
