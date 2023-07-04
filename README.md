@@ -27,7 +27,7 @@ Strimzi Kafka의 아키텍처에는 다음이 포함된다.
 
 ## 1. 설치 전 참고 사항
 ### 설치 버전
-Operator 버전 별로 상이(아래 URL 참고)   
+Operator 버전마다 요구사항 상이(아래 URL 참고)   
 URL - https://strimzi.io/downloads/
 
 본 문서에서는 아래와 같은 버전으로 진행한다.
