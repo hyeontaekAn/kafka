@@ -206,5 +206,5 @@ kafkatopics.kafka.strimzi.io                          2023-07-04T04:25:20Z
 kafkausers.kafka.strimzi.io                           2023-07-04T04:25:20Z
 ```
 **6. Kafka Cluster 배포**
-해당 단계 내용부터는 위 yaml등록 방식과 동일하다. 아래 URL을 통해 Kafka Cluster YAML파일을 볼 수 있다. 
+해당 단계 내용부터는 위 yaml등록 방식과 동일하다. 아래 URL을 통해 Kafka Cluster YAML파일을 볼 수 있다.   
 URL - https://github.com/strimzi/strimzi-kafka-operator/tree/main/examples/kafka
