@@ -79,11 +79,12 @@ URL - https://strimzi.io/quickstarts/
 - 현재 기준 Stable 버전으로 진행한다 - https://strimzi.io/downloads/
 ```sh
 $ wget https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.35.1/strimzi-0.35.1.tar.gz
-$ tar zxvf strimzi-0.35.1.tar.gz
 ```
 
 **2. 다운로드 받은 tar.gz 파일을 압축 해제한다.**
 ```bash
+$ tar zxvf strimzi-0.35.1.tar.gz
+
 strimzi-0.35.1
 │  docs/
 │  example/
