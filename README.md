@@ -210,3 +210,95 @@ kafkausers.kafka.strimzi.io                           2023-07-04T04:25:20Z
 
 해당 단계 내용부터는 위 yaml등록 방식과 동일하다. 아래 URL을 통해 Kafka Cluster YAML파일을 볼 수 있다.   
 URL - https://github.com/strimzi/strimzi-kafka-operator/tree/main/examples/kafka
+
+## 4. 테스트
+**1. Topic 생성** - `topic.yaml`   
+```yaml
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: my-topic  # Topic 이름
+  labels:
+    strimzi.io/cluster: my-cluster  # 배포한 Kafka Cluster 이름 (Default=my-cluster)
+spec:
+  partitions: 3  # Topic의 파티션 수
+  replicas: 3    # Topic의 복제 수
+  config:
+    retention.ms: 7200000
+    segment.bytes: 1073741824
+```
+```bash
+$ kubectl apply -f topic.yaml -n <strimzi 배포 네임스페이스 명>
+```
+
+**2. Topic 생성 확인**
+```bash
+$ kubectl get kafkatopics -n <strimzi 배포 네임스페이스 명>
+NAME        CLUSTER      PARTITIONS   REPLICATION FACTOR   READY
+test        my-cluster   3            3                    True
+...
+```
+
+**3. Kafka Pub/Sub 테스트**   
+Strimzi Kafka 배포 시 Service는 ClusterIP로 같이 배포된다.   
+테스트 방법은 아래의 예시를 참고한다.
+1. `Kubernetes Master Node`에 Apache Kafka를 직접 설치하여 ClusterIP로 연결
+2. Apache Kafka 바이너리를 이미지로 직접 빌드하여 `Kubernetes Pod` 배포 후 클라이언트 사용 - `kafka-console-producer.sh`
+3. bitnami/kafka 이미지를 이용하여 `Kubernetes Pod` 배포 후 클라이언트 사용 - `kafka-console-consumer.sh`
+
+본 문서에서는 **3. bitnami/kafka 이미지**를 사용하여 테스트를 진행한다.
+
+**3.1. Kafka Client Pod 배포** - `Client.yaml`
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: strimzi-test    # Pod 이름
+  labels:
+    app: myclient       # Label 지정 (옵션)
+spec:
+  containers:
+  - name: test                # Container 이름
+    image: bitnami/kafka:3.4  # 사용 이미지 (bitnami/kafka v3.4)
+    command: ["tail"]
+    args: ["-f", "/dev/null"]
+```
+```bash
+$ kubectl apply -f Client.yaml -n app  # app = namespace 이름
+```
+
+**3.2. 배포 확인**
+```bash
+$ kubectl get pod -n app | grep strimzi-test
+NAME           READY   STATUS    RESTARTS   AGE
+strimzi-test   2/2     Running   0          173m
+```
+
+**3.3. 연결된 Service 확인**
+```bash
+$ kubectl get svc -n <Strimzi 배포 네임스페이스 명>
+NAME                          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                               AGE
+my-cluster-kafka-bootstrap    ClusterIP   10.109.64.220    <none>        9091/TCP,9092/TCP,9093/TCP            3h48m
+```
+Strimzi Kafka에 연결된 서비스 이름은 다음과 같다.
+* 서비스 이름 : `<배포된 Kafka 클러스터 이름>-kafka-bootstrap`
+
+> 9091포트 - 브로커 간 통신 | 9092포트 - Client와 PLAINTEXT 통신 | 9093포트 - Client와 TLS 통신
+
+**3.4. Pub/Sub 테스트**   
+Kubernetes에서 사용하는 도메인은 다음과 같다.
+* 도메인 : `<서비스 이름>.<네임스페이스 이름>.svc`
+
+```bash
+# Producer 연결
+# kubectl exec -it -n <Kafka Client Pod 이름> -- kafka-console-producer.sh --bootstrap-server <Strimzi Kafka 도메인:포트> --topic <토픽 이름>
+$ kubectl exec -it -n app strimzi-test -- kafka-console-producer.sh --bootstrap-server my-cluster-kafka-bootstrap.helm-strimzi.svc:9092 --topic test
+```
+```bash
+# Consumer 연결
+# kubectl exec -it -n <Kafka Client Pod 이름> -- kafka-console-consumer.sh --bootstrap-server <Strimzi Kafka 도메인:포트> --topic test
+$ kubectl exec -it -n app strimzi-test -- kafka-console-consumer.sh --bootstrap-server my-cluster-kafka-bootstrap.helm-strimzi.svc:9092 --topic test
+```
+
+
+
