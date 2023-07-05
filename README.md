@@ -154,7 +154,7 @@ $ helm version
 version.BuildInfo{Version:"v3.11.2", GitCommit:"912ebc1cd10d38d340f048efaf0abda047c3468e", GitTreeState:"clean", GoVersion:"go1.18.10"}
 ```
 
-**2. Strimzi Operator 설치**
+**2. Strimzi Operator를 설치한다.**
 ```bash
 $ helm repo add strimzi https://strimzi.io/charts/  # repo 추가
 $ helm repo update                                  # repo 업데이트
@@ -164,12 +164,12 @@ NAME            URL
 strimzi         https://strimzi.io/charts/
 ```
 
-**3. Kubernetes Namespace 생성**
+**3. Kubernetes Namespace를 생성한다.**
 ```bash
 $ kubectl create namespace helm-strimzi  # kubectl create namespace <namespace명>
 ```
 
-**4. Strimzi-Cluster-Operator 배포**
+**4. Strimzi-Cluster-Operator를 배포한다.**
 ```bash
 $ helm install helm-strimzi --namespace helm-strimzi strimzi/strimzi-kafka-operator
 NAME: helm-strimzi
@@ -205,6 +205,7 @@ kafkas.kafka.strimzi.io                               2023-07-04T04:25:20Z
 kafkatopics.kafka.strimzi.io                          2023-07-04T04:25:20Z
 kafkausers.kafka.strimzi.io                           2023-07-04T04:25:20Z
 ```
-**6. Kafka Cluster 배포**
+**6. Kafka Cluster를 배포한다.** 
+
 해당 단계 내용부터는 위 yaml등록 방식과 동일하다. 아래 URL을 통해 Kafka Cluster YAML파일을 볼 수 있다.   
 URL - https://github.com/strimzi/strimzi-kafka-operator/tree/main/examples/kafka
