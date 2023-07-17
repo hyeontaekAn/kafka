@@ -300,5 +300,6 @@ $ kubectl exec -it -n app strimzi-test -- kafka-console-producer.sh --bootstrap-
 $ kubectl exec -it -n app strimzi-test -- kafka-console-consumer.sh --bootstrap-server my-cluster-kafka-bootstrap.helm-strimzi.svc:9092 --topic test
 ```
 
-
+## 5. 출처
+Strimzi Kafka - https://strimzi.io/
 
