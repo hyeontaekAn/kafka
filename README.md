@@ -301,5 +301,5 @@ $ kubectl exec -it -n app strimzi-test -- kafka-console-consumer.sh --bootstrap-
 ```
 
 ## 5. 출처
-Strimzi Kafka - https://strimzi.io/
+Strimzi Kafka Architecture - https://strimzi.io/
 
